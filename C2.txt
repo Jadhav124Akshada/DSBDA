@@ -1,0 +1,115 @@
+1-import pandas as pd
+import seaborn as sns
+import numpy as np
+import matplotlib.pyplot as plt
+import statsmodels.api as sm 
+
+2-df=pd.read_csv("US_graduate_schools_admission_parameters_dataset.csv")
+df
+
+3-df.columns
+
+4-df.drop(columns=['Serial No.'],inplace=True)
+
+5-import plotly.express as px
+fig = px.scatter(df, x="GRE Score", y="Chance of Admit ")
+fig.show()
+
+6-import plotly.express as px
+fig = px.scatter(df, x="GRE Score", y="Chance of Admit ",color='Research')
+fig.show()
+
+7-import plotly.express as px
+fig = px.scatter(df, x="GRE Score", y="University Rating",color='Chance of Admit ')
+fig.show()
+
+8-import plotly.express as px
+fig = px.scatter(df, x="TOEFL Score", y="Chance of Admit ",color='SOP')
+fig.show()
+
+9-import plotly.express as px
+fig = px.scatter(df, x="TOEFL Score", y="Chance of Admit ",color='Research')
+fig.show()
+
+10-import plotly.express as px
+fig = px.scatter(df, x="TOEFL Score", y="GRE Score")
+fig.show()
+
+11-df["GRE+TOEFL"]=df["GRE Score"]+df['TOEFL Score']
+df["LOR+SOP"]=df['SOP']+df[ 'LOR ']
+
+12-dic=df.groupby('University Rating').mean()["GRE Score"].to_dict()
+df["GRE_MEAN"] = df['University Rating'].map(dic)
+
+13-dic1=df.groupby('University Rating').mean()["TOEFL Score"].to_dict()
+df["TOEFL_MEAN"] = df['University Rating'].map(dic1)
+
+14-dic2=df.groupby('University Rating').mean()["GRE+TOEFL"].to_dict()
+df["GRE+TOEFL_MEAN"] = df['University Rating'].map(dic2)
+
+15-df
+
+16-X=df[['GRE Score', 'TOEFL Score', 'University Rating', 'SOP', 'LOR ', 'CGPA',
+       'Research', 'GRE+TOEFL','LOR+SOP',"TOEFL_MEAN","GRE+TOEFL_MEAN","GRE_MEAN"]]
+Y=df['Chance of Admit ']  
+
+17-for i in X:
+  df[i]=(df[i]-df[i].min())/(df[i].max()-df[i].min())
+
+18-df
+
+19- df.corr()
+
+20- columns=df.columns
+
+21-sns.set(style='whitegrid', palette="deep", font_scale=1.1, rc={"figure.figsize": [8, 5]})
+fig, ax = plt.subplots(3,3, figsize=(20, 10))
+for variable, subplot in zip(columns, ax.flatten()):
+    sns.histplot(x=variable,data=df,ax=subplot)
+    
+    for label in subplot.get_xticklabels():
+        label.set_rotation(90)
+fig.tight_layout()
+
+22-df["Research"].value_counts()
+
+23-#SPLIITING THE DATASET INTO TRAIN AND TEST SET
+from sklearn.model_selection import train_test_split
+X_train, X_valid, y_train, y_valid = train_test_split(X, Y, test_size=0.15, random_state=0)
+
+24- from sklearn.linear_model import LinearRegression
+logisticRegr = LinearRegression()
+logisticRegr.fit(X_train, y_train)
+predictions = logisticRegr.predict(X_valid)
+score = logisticRegr.score(X_train,y_train)
+print(score)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

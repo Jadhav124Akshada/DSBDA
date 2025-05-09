@@ -1,0 +1,126 @@
+################################################################################################
+				HADOOP SINGLE NODE INSTALLATION
+################################################################################################
+
+* shekhar@ubuntu:~$ sudo apt-get update
+
+* shekhar@ubuntu:~$ sudo apt-get install default-jdk
+
+
+* shekhar@ubuntu:~$ java -version 
+
+* shekhar@ubuntu:~$ sudo apt-get upgrade
+
+* 
+
+* shekhar@ubuntu:~$ sudo addgroup hadoop
+
+* shekhar@ubuntu:~$ sudo adduser --ingroup hadoop hduser
+
+* shekhar@ubuntu:~$ sudo adduser hduser sudo
+
+* shekhar@ubuntu:~$ sudo apt-get install openssh-server
+
+* shekhar@ubuntu:~$ su - hduser	
+
+* hduser@ubuntu:~$ pwd   			---> check whether you are logged in correctly or not.
+* hduser@ubuntu:~$ ssh-keygen -t rsa -P ""
+
+* hduser@ubuntu:~$ cat $HOME/.ssh/id_rsa.pub >> $HOME/.ssh/authorized_keys
+
+* hduser@ubuntu:~$ ssh localhost
+
+* hduser@ubuntu:~$ exit
+
+Download hadoop-2.9.0.tar.gz and extract it in Download folder with hadoop name
+
+* hduser@ubuntu:~$ sudo mv /home/shekhar/Downloads/hadoop /usr/local		---> Replace shekhar with your username
+* hduser@ubuntu:~$ sudo chown -R hduser /usr/local
+* hduser@ubuntu:~$ sudo nano .bashrc
+
+
+Copy the following  lines of Environment variables in .bashrc file and edit the JAVA_HOME path with your java installation dir(Replace java_home path with your installed java path)
+
+export JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64
+export HADOOP_HOME=/usr/local/hadoop
+export PATH=$PATH:$HADOOP_HOME/bin
+export PATH=$PATH:$HADOOP_HOME/sbin
+export HADOOP_MAPRED_HOME=$HADOOP_HOME
+export HADOOP_COMMON_HOME=$HADOOP_HOME
+export HADOOP_HDFS_HOME=$HADOOP_HOME
+export YARN_HOME=$HADOOP_HOME
+export HADOOP_COMMON_LIB_NATIVE_DIR=$HADOOP_HOME/lib/native
+export HADOOP_OPTS="-Djava.library.path=$HADOOP_HOME/lib"
+
+
+
+* hduser@ubuntu:~$ sudo gedit /usr/local/hadoop/etc/hadoop/hadoop-env.sh 	---> Set java_home path
+
+     export JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64
+
+* hduser@ubuntu:~$ sudo gedit /usr/local/hadoop/etc/hadoop/core-site.xml
+ 
+Copy following code in core-site.xml
+  
+ <property>
+  <name>fs.default.name</name>
+  <value>hdfs://localhost:9000</value>
+   </property>
+
+* hduser@ubuntu:~$ sudo gedit /usr/local/hadoop/etc/hadoop/hdfs-site.xml
+Copy following code in hdfs-site.xml
+
+<property>
+  <name>dfs.replication</name>
+  <value>1</value>
+</property>
+<property>
+  <name>dfs.namenode.name.dir</name>
+  <value>file:/usr/local/hadoop_tmp/hdfs/namenode</value>
+</property>
+<property>
+ <name>dfs.datanode.data.dir</name>
+ <value>file:/usr/local/hadoop_tmp/hdfs/datanode</value>
+</property>
+
+
+* hduser@ubuntu:~$ sudo gedit /usr/local/hadoop/etc/hadoop/yarn-site.xml 
+Copy following code in yarn-site.xml
+
+<property>
+  <name>yarn.nodemanager.aux-services</name>
+  <value>mapreduce_shuffle</value>
+</property>
+<property>
+  <name>yarn.nodemanager.aux-services.mapreduce.shuffle.class</name>
+  <value>org.apache.hadoop.mapred.ShuffleHandler</value>
+</property>
+
+* hduser@ubuntu:~$ sudo cp /usr/local/hadoop/etc/hadoop/mapred-site.xml.template  /usr/local/hadoop/etc/hadoop/mapred-site.xml
+
+* hduser@ubuntu:~$ sudo gedit /usr/local/hadoop/etc/hadoop/mapred-site.xml
+Copy following code in mapred-site.xml
+
+<property>
+  <name>mapreduce.framework.name</name>
+  <value>yarn</value>
+</property>
+
+* hduser@ubuntu:~$ sudo mkdir -p /usr/local/hadoop_tmp
+* hduser@ubuntu:~$ sudo mkdir -p /usr/local/hadoop_tmp/hdfs/namenode
+* hduser@ubuntu:~$ sudo mkdir -p /usr/local/hadoop_tmp/hdfs/datanode
+* hduser@ubuntu:~$ sudo chown -R hduser /usr/local/hadoop_tmp
+* hduser@ubuntu:~$ hdfs namenode -format    ------>if error then start terminal again and execute command again
+* hduser@ubuntu:~$ start-dfs.sh
+* hduser@ubuntu:~$ start-yarn.sh
+* hduser@ubuntu:~$ jps
+	9008 ResourceManager
+	9122 NodeManager
+	8516 NameNode
+	8852 SecondaryNameNode
+	9415 Jps
+	8633 DataNode
+
+
+
+

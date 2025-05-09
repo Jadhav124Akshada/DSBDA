@@ -1,0 +1,62 @@
+1-import pandas as pd
+
+2-df = pd.read_csv('city_day.csv',sep=',');
+print(df.head())
+
+3-newdf=df.drop(['PM10'],axis=1)
+print("\nAfter Dropping PM10 column")
+print(newdf.head())
+
+4-print("\ncount Data types of columns:\n")
+print(newdf.dtypes.value_counts())
+
+5-extr = newdf['Date']
+print(extr.head())
+newdf['Date'] = pd.to_datetime(extr)
+print("\n Data types of date:   ",newdf['Date'].dtype)
+
+6-print("\n Is missing values: ",df.isnull().values.any())
+
+7-drop_newdf=newdf.dropna()
+print("\n Is missing values after dropping: ",drop_newdf.isnull().values.any())
+
+8-replace_newdf=newdf
+replace_newdf['PM2.5']=newdf['PM2.5'].fillna(0)
+print(replace_newdf['PM2.5'])
+
+9-replace_newdf=newdf.fillna(0)
+print(replace_newdf)
+
+10-print(newdf.duplicated())
+
+11-subset1=newdf[1:6]
+print(subset1)
+
+11-subset2=newdf[6:11]
+print(subset2)
+subset3=pd.concat([subset1, subset2], axis=0, ignore_index=True)
+print(subset3)
+
+12-df1 = pd.DataFrame(
+    {
+        "fruit": ["apple", "orange", "apple", "avocado", "orange"],
+        "customer": ["ben", "alice", "ben", "josh", "steve"],
+        "quantity": [1, 2, 3, 1, 2],
+    }
+)
+print("dataset:");
+print(df1);
+print("Pivote Table:");
+print(df1.pivot_table(index="fruit", columns="customer", values="quantity", aggfunc='mean'))
+
+
+
+
+
+
+
+
+
+
+
+
